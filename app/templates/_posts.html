@@ -1,0 +1,15 @@
+<ul class="posts">
+    {% for book in posts %}
+    <li class="post">
+        <div class="post-content">
+            <div class="post-body">
+                {% if book.body_html %}
+                    {{ book.body_html | safe }}
+                {% else %}
+                    {{ book.title }}
+                {% endif %}
+            </div>
+        </div>
+    </li>
+    {% endfor %}
+</ul>
