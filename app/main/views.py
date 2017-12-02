@@ -109,6 +109,14 @@ def delete_all(bookid):
     return redirect(url_for('.index'))
        
         
+@main.route('/add_book',methods=['GET','POST'])
+@login_required
+@admin_required
+def add_book():
+   form = AddForm()
+    if form.validate_on_submit():
+
+    return render_template('index.html', form=form, posts=posts, pagination=pagination)
 
 
 @main.route('/user/<username>')
