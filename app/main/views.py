@@ -36,8 +36,8 @@ def index():
     form = QueryForm()
     if current_user.can(Permission.RENT) and \
             form.validate_on_submit():
-        print(form.title.data)
-        query= Book.query.filter_by(title=form.title.data)
+#print(form.title.data)
+        query= Book.query.filter(Book.title.like('%'+form.title.data+'%'))
         page = request.args.get('page', 1, type=int)
         pagination = query.paginate(
             page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
@@ -72,8 +72,42 @@ def rent(book_id):
         flash("Sorry, but you can't rent the book now")
     return redirect(url_for('.index'))
 
+@main.route('/delete_book/<book_id>')
+@login_required
+@admin_required
+def delete_book(book_id):
+    b=Book.query.filter_by(id=book_id).first()
+    if (b.inventory<=0):
+        flash("No enough book!")
+        return redirect(url_for('.index'))
+    b.inventory=b.inventory-1
+    db.session.add(b)
+# db.session.add(r)
+    try:
+        db.session.commit()
+        flash("Congratualtions! You have deleted the book")
+    except:
+        db.session.rollback()
+        flash("Sorry, but you can't delete the book now")
+    return redirect(url_for('.index'))
 
-        
+@main.route('/delete_all/<bookid>')
+@login_required
+@admin_required
+def delete_all(bookid):
+    rents=Rent.query.filter_by(book_id=bookid).all()
+    for rent in rents:
+        db.session.delete(rent)
+    b=Book.query.filter_by(id=bookid).first()
+    db.session.delete(b)
+    try:
+        db.session.commit()
+        flash("Congratualtions! You have deleted the book")
+    except:
+        db.session.rollback()
+        flash("Sorry, but you can't delete the book now")
+    return redirect(url_for('.index'))
+       
         
 
 
