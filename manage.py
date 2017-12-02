@@ -14,7 +14,7 @@ if os.path.exists('.env'):
             os.environ[var[0]] = var[1]
 
 from app import create_app, db
-from app.models import User, Follow, Role, Permission, Post, Comment, Book
+from app.models import User, Follow, Role, Permission, Post, Comment, Book, Rent
 from flask_script import Manager, Shell
 from flask_migrate import Migrate, MigrateCommand
 
@@ -25,7 +25,7 @@ migrate = Migrate(app, db)
 
 def make_shell_context():
     return dict(app=app, db=db, User=User, Follow=Follow, Role=Role,
-                Permission=Permission, Post=Post, Comment=Comment,Book=Book)
+                Permission=Permission, Post=Post, Comment=Comment,Book=Book,Rent=Rent)
 manager.add_command("shell", Shell(make_context=make_shell_context))
 manager.add_command('db', MigrateCommand)
 
@@ -65,16 +65,19 @@ def profile(length=25, profile_dir=None):
 def deploy():
     """Run deployment tasks."""
     from flask_migrate import upgrade
-    from app.models import Role, User
+    from app.models import Role, User, Rent, Book
 
     # migrate database to latest revision
-    upgrade()
-
+    # upgrade()
+    db.drop_all()
+    db.create_all()
     # create user roles
     Role.insert_roles()
-
+    db.session.add(Book(title="math",author="eula"))
+    db.session.add(Book(title="physics",author="einstein"))
+    Book.generate_fake(10)
     # create self-follows for all users
-    User.add_self_follows()
+    #User.add_self_follows()
 
 
 if __name__ == '__main__':

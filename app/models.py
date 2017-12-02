@@ -70,22 +70,27 @@ class Book(db.Model):
     id=db.Column(db.Integer,primary_key=True)
     title=db.Column(db.String(64))
     author=db.Column(db.String(20))
-    book_id=db.Column(db.String(10))
-    price=db.Column(db.String)
+    book_num=db.Column(db.String(10))
+    price=db.Column(db.Float,default=10.2)
     press=db.Column(db.String(64))
     press_time=db.Column(db.DateTime())
-    inventory=db.Column(db.Integer)
+    inventory=db.Column(db.Integer,default=1)
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
 
     @staticmethod
     def generate_fake(count=100):
-        from random import seed, randint
+        from random import seed, randint, uniform
         import forgery_py
 
         seed()
         for i in range(count):
-            p = Book(title=forgery_py.lorem_ipsum.sentences(),
-                     author=forgery_py.lorem_ipsum.word())
+            p = Book(title=forgery_py.lorem_ipsum.title(),
+                     author=forgery_py.name.last_name(),
+                     press=forgery_py.name.company_name(),
+                     book_num=forgery_py.basic.text(length=5),
+                     press_time=forgery_py.date.date(past=True,max_delta=10000),
+                     price=uniform(10,100),
+                     inventory=randint(1,10))
             db.session.add(p)
             db.session.commit()
 
@@ -98,13 +103,6 @@ class Book(db.Model):
             markdown(value, output_format='html'),
             tags=allowed_tags, strip=True))
 
-class Rent(db.Model):
-    __tablename__='rents'
-    id=db.Column(db.Integer,primary_key=True)
-    book_id=db.Column(db.Integer)
-    student_number=db.Column(db.Integer)
-    from_data=db.Column(db.DateTime(),default=datetime.utcnow())
-
 
 class Follow(db.Model):
     __tablename__ = 'follows'
@@ -114,6 +112,10 @@ class Follow(db.Model):
                             primary_key=True)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
 
+class Rent(db.Model):
+    __tablename__='rents'
+    book_id=db.Column(db.Integer, db.ForeignKey('books.id'),primary_key=True)
+    student_id=db.Column(db.Integer, db.ForeignKey('users.id'),primary_key=True)
 
 class User(UserMixin, db.Model):
     __tablename__ = 'users'
@@ -133,6 +135,7 @@ class User(UserMixin, db.Model):
     last_seen = db.Column(db.DateTime(), default=datetime.utcnow)
     avatar_hash = db.Column(db.String(32))
     posts = db.relationship('Post', backref='author', lazy='dynamic')
+    rents = db.relationship('Rent', backref='student', lazy='dynamic')
     followed = db.relationship('Follow',
                                foreign_keys=[Follow.follower_id],
                                backref=db.backref('follower', lazy='joined'),

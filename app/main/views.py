@@ -6,7 +6,7 @@ from . import main
 from .forms import EditProfileForm, EditProfileAdminForm, PostForm,\
     CommentForm, QueryForm
 from .. import db
-from ..models import Permission, Role, User, Post, Comment, Book
+from ..models import Permission, Role, User, Post, Comment, Book, Rent
 from ..decorators import admin_required, permission_required
 
 
@@ -51,6 +51,30 @@ def index():
         error_out=False)
     posts = pagination.items
     return render_template('index.html', form=form, posts=posts, pagination=pagination)
+
+@main.route('/rent/<book_id>')
+@login_required
+def rent(book_id):
+    b=Book.query.filter_by(id=book_id).first()
+    if (b.inventory<=0):
+        flash("No enough book!")
+        return redirect(url_for('.index'))
+    b.inventory=b.inventory-1
+    db.session.add(b)
+    r=Rent(book_id=book_id,
+            student_id=current_user.id)
+    db.session.add(r)
+    try:
+        db.session.commit()
+        flash("Congratualtions! You have rented the book")
+    except:
+        db.session.rollback()
+        flash("Sorry, but you can't rent the book now")
+    return redirect(url_for('.index'))
+
+
+        
+        
 
 
 @main.route('/user/<username>')
