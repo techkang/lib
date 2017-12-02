@@ -1,10 +1,22 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, TextAreaField, BooleanField, SelectField,\
-    SubmitField
+    SubmitField, DateField, IntegerField, FloatField
 from wtforms.validators import Required, Length, Email, Regexp
 from wtforms import ValidationError
 from flask_pagedown.fields import PageDownField
 from ..models import Role, User
+
+class AddForm(FlaskForm):
+    title=StringField("Book title",validators=[Required()])
+    author=StringField("author",validators=[Required()])
+    book_num=StringField("book number",validators=[Required()])
+    price=FloatField("price",validators=[Required()])
+    press=StringField("publishing houst",validators=[Required()])
+    press_time=DateField("publish date",validators=[Required()])
+    inventory=IntegerField("inventory",validators=[Required()],default=1)
+
+
+
 
 class QueryForm(FlaskForm):
     title=StringField("Search book you want now!",validators=[Required()])
