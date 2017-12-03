@@ -15,16 +15,16 @@
                 <a href="{{url_for('.rent',book_id=book.id)}}">
                     <span class="label label-primary">Rent ({{book.inventory}} left)</span>
                 </a>
-                {% endif %}
                 {% if current_user.can(Permission.DELETE) %}
                 <a href="{{url_for('.delete_book',book_id=book.id)}}">
                     <span class="label label-danger">DELETE</span>
                 </a>
                 {% endif %}
-                {% if current_user.is_administor() %}
+                {% if current_user.is_administrator() %}
                 <a href="{{url_for('.delete_all',bookid=book.id)}}">
                     <span class="label label-danger">DELETE ALL</span>
                 </a>
+                {% endif %}
                 {% endif %}
             </div>
 
