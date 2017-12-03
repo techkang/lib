@@ -142,14 +142,14 @@ def detail(book_id):
     book=Book.query.filter_by(id=book_id).first_or_404()
     return render_template('detail.html',book=book, user=current_user)
 
-@main.route('/user/<username>')
+@main.route('/user/<user_name>')
 @login_required
-def user(username):
-    if not (current_user.username==username or current_user.can(Permission.INSERT)):
+def user(user_name):
+    if not (current_user.username==user_name or current_user.can(Permission.INSERT)):
         abort(500)
-    user = User.query.filter_by(username=username).first_or_404()
+    user = User.query.filter_by(username=user_name).first_or_404()
     page = request.args.get('page', 1, type=int)
-    pagination = Rent.query.filter_by(student_id=current_user.id).paginate(
+    pagination = Rent.query.filter_by(student_id=user.id).paginate(
         page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
         error_out=False)
     comments = pagination.items
