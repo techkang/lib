@@ -79,7 +79,7 @@ def rent(book_id):
 
 @main.route('/delete_book/<book_id>')
 @login_required
-@admin_required
+@permission_required(Permission.DELETE)
 def delete_book(book_id):
     b=Book.query.filter_by(id=book_id).first()
     if (b.inventory<=0):
@@ -116,7 +116,7 @@ def delete_all(bookid):
         
 @main.route('/add_book',methods=['GET','POST'])
 @login_required
-@admin_required
+@permission_required(Permission.INSERT)
 def add_book():
    form = AddForm()
    if form.validate_on_submit():
@@ -145,6 +145,8 @@ def detail(book_id):
 @main.route('/user/<username>')
 @login_required
 def user(username):
+    if not (current_user.username==username or current_user.can(Permission.INSERT)):
+        abort(500)
     user = User.query.filter_by(username=username).first_or_404()
     page = request.args.get('page', 1, type=int)
     pagination = Rent.query.filter_by(student_id=current_user.id).paginate(

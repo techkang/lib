@@ -8,7 +8,7 @@
             </div>
         </div>
         <div class="post-footer">
-           {% if current_user.is_administrator() %}
+           {% if current_user.can(Permission.DELETE) %}
            <a href="{{url_for('.return_book_confirm',book_id=comment.book.id,student_id=comment.student.id)}}">
                 <span class="label label-danger">Confirm</span>
            </a>
