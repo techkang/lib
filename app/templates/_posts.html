@@ -8,7 +8,7 @@
             <div class="post-body">
                     {{ book.author }}
             </div>
-            <div>
+            <div class="post-footer">
                 {% if current_user.is_authenticated %}
                 <a href="{{url_for('.rent',book_id=book.id)}}">
                     <span class="label label-primary">Rent ({{book.inventory}} left)</span>
@@ -22,6 +22,7 @@
                     <span class="label label-danger">DELETE ALL</span>
                 </a>
                 {% endif %}
+            </div>
 
         </div>
     </li>

@@ -76,6 +76,7 @@ class Book(db.Model):
     press_time=db.Column(db.DateTime())
     inventory=db.Column(db.Integer,default=1)
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    rents = db.relationship('Rent', backref='book', lazy='dynamic')
 
     @staticmethod
     def generate_fake(count=100):
