@@ -3,7 +3,9 @@
     <li class="post">
         <div class="post-content">
             <div class='post-author'>
-                {{ book.title }}
+                <a href="{{ url_for('.detail',book_id=book.id) }}">
+                    {{ book.title }}
+                </a>
             </div>
             <div class="post-body">
                     {{ book.author }}

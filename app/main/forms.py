@@ -21,6 +21,7 @@ class AddForm(FlaskForm):
 
 class QueryForm(FlaskForm):
     title=StringField("Search book you want now!",validators=[Required()])
+    category=SelectField('Query categoty',choices=[('title','title'),('author','author'),('press','press')])
     submit=SubmitField('Submit')
 
 class NameForm(FlaskForm):

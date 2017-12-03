@@ -37,7 +37,12 @@ def index():
     if current_user.can(Permission.RENT) and \
             form.validate_on_submit():
 #print(form.title.data)
-        query= Book.query.filter(Book.title.like('%'+form.title.data+'%'))
+        category=Book.title
+        if form.category.data=='author':
+            category=Book.author
+        if form.category.data=='press':
+            category=Book.press
+        query= Book.query.filter(category.like('%'+form.title.data+'%'))
         page = request.args.get('page', 1, type=int)
         pagination = query.paginate(
             page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
@@ -132,7 +137,13 @@ def add_book():
    return render_template('add_book.html', form=form)
 
 
+@main.route('/detail/<book_id>')
+def detail(book_id):
+    book=Book.query.filter_by(id=book_id).first_or_404()
+    return render_template('detail.html',book=book, user=current_user)
+
 @main.route('/user/<username>')
+@login_required
 def user(username):
     user = User.query.filter_by(username=username).first_or_404()
     page = request.args.get('page', 1, type=int)
