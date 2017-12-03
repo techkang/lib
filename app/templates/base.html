@@ -30,6 +30,7 @@
             </ul>
             <ul class="nav navbar-nav navbar-right">
                 {% if current_user.can(Permission.INSERT) %}
+                <li><a href="{{ url_for('main.add_book') }}">Add New Book</a></li>
                 <li><a href="{{ url_for('main.moderate') }}">Moderate Comments</a></li>
                 {% endif %}
                 {% if current_user.is_authenticated %}

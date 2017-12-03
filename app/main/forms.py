@@ -14,7 +14,7 @@ class AddForm(FlaskForm):
     press=StringField("publishing houst",validators=[Required()])
     press_time=DateField("publish date",validators=[Required()])
     inventory=IntegerField("inventory",validators=[Required()],default=1)
-
+    submit=SubmitField("Submit")
 
 
 

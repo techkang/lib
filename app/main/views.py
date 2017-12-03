@@ -4,7 +4,7 @@ from flask_login import login_required, current_user
 from flask_sqlalchemy import get_debug_queries
 from . import main
 from .forms import EditProfileForm, EditProfileAdminForm, PostForm,\
-    CommentForm, QueryForm
+    CommentForm, QueryForm, AddForm
 from .. import db
 from ..models import Permission, Role, User, Post, Comment, Book, Rent
 from ..decorators import admin_required, permission_required
@@ -114,9 +114,22 @@ def delete_all(bookid):
 @admin_required
 def add_book():
    form = AddForm()
-    if form.validate_on_submit():
-
-    return render_template('index.html', form=form, posts=posts, pagination=pagination)
+   if form.validate_on_submit():
+       book=Book(title=form.title.data,       
+               author=form.author.data,
+               book_num=form.book_num.data,
+               price=form.price.data,
+               press=form.press.data,
+               press_time=form.press_time.data,
+               inventory=form.inventory.data)
+       db.session.add(book)
+       try:
+           db.session.commit()
+           flash('Congratulations! You have add new book.')
+       except:
+           db.session.rollback()
+           flash('Sorry, but you failed to add new book.')       
+   return render_template('add_book.html', form=form)
 
 
 @main.route('/user/<username>')

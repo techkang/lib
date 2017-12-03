@@ -13,14 +13,6 @@
     {{ wtf.quick_form(form) }}
     {% endif %}
 </div>
-<div class="post-tabs">
-    {% include '_posts.html' %}
-<div>
-{% if pagination %}
-<div class="pagination">
-    {{ macros.pagination_widget(pagination, '.index') }}
-</div>
-{% endif %}
 {% endblock %}
 
 {% block scripts %}
