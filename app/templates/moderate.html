@@ -1,11 +1,15 @@
 {% extends "base.html" %}
 {% import "_macros.html" as macros %}
+{% import "bootstrap/wtf.html" as wtf %}
 
 {% block title %}Return Books{% endblock %}
 
 {% block page_content %}
 <div class="page-header">
     <h1>Return Books</h1>
+</div>
+<div>
+    {{ wtf.quick_form(form) }}
 </div>
 {% set moderate = True %}
 {% include '_comments.html' %}

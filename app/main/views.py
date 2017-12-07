@@ -4,7 +4,7 @@ from flask_login import login_required, current_user
 from flask_sqlalchemy import get_debug_queries
 from . import main
 from .forms import EditProfileForm, EditProfileAdminForm, PostForm,\
-    CommentForm, QueryForm, AddForm
+    CommentForm, QueryForm, AddForm, UserForm
 from .. import db
 from ..models import Permission, Role, User, Post, Comment, Book, Rent
 from ..decorators import admin_required, permission_required
@@ -190,7 +190,7 @@ def edit_profile_admin(id):
         user.about_me = form.about_me.data
         db.session.add(user)
         flash('The profile has been updated.')
-        return redirect(url_for('.user', username=user.username))
+        return redirect(url_for('.user', user_name=user.username))
     form.email.data = user.email
     form.username.data = user.username
     form.confirmed.data = user.confirmed
@@ -322,16 +322,20 @@ def show_followed():
     resp.set_cookie('show_followed', '1', max_age=30*24*60*60)
     return resp
 
-@main.route('/return_book')
+@main.route('/return_book',methods=['POST','GET'])
 @login_required
 @permission_required(Permission.INSERT)
 def return_book():
+    form=UserForm()
+    if form.validate_on_submit():   
+        user=User.query.filter(User.username.like(form.username.data+'%')).first_or_404()
+        return redirect(url_for('.user',user_name=user.username))
     page = request.args.get('page', 1, type=int)
     pagination = Rent.query.paginate(
         page, per_page=current_app.config['FLASKY_COMMENTS_PER_PAGE'],
         error_out=False)
     comments = pagination.items
-    return render_template('moderate.html', comments=comments,
+    return render_template('moderate.html', comments=comments,form=form,
                            pagination=pagination, page=page)
 
 @main.route('/return_book_confirm/<int:book_id>__<int:student_id>')

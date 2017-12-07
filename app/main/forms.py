@@ -18,6 +18,9 @@ class AddForm(FlaskForm):
     submit=SubmitField("Submit")
 
 
+class UserForm(FlaskForm):
+    username=StringField("Student name",validators=[Required()])
+    submit=SubmitField("Submit")
 
 class QueryForm(FlaskForm):
     title=StringField("Search book you want now!",validators=[Required()])
