@@ -163,8 +163,6 @@ def edit_profile():
     form = EditProfileForm()
     if form.validate_on_submit():
         current_user.name = form.name.data
-        current_user.location = form.location.data
-        current_user.about_me = form.about_me.data
         db.session.add(current_user)
         flash('Your profile has been updated.')
         return redirect(url_for('.user', username=current_user.username))
@@ -185,9 +183,6 @@ def edit_profile_admin(id):
         user.username = form.username.data
         user.confirmed = form.confirmed.data
         user.role = Role.query.get(form.role.data)
-        user.name = form.name.data
-        user.location = form.location.data
-        user.about_me = form.about_me.data
         db.session.add(user)
         flash('The profile has been updated.')
         return redirect(url_for('.user', user_name=user.username))
