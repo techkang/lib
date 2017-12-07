@@ -42,7 +42,7 @@ def index():
             category=Book.author
         if form.category.data=='press':
             category=Book.press
-        query= Book.query.filter(category.like('%'+form.title.data+'%'))
+        query= Book.query.filter(category.like('%'+'%'.join(form.title.data.split())+'%'))
         page = request.args.get('page', 1, type=int)
         pagination = query.paginate(
             page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
